@@ -20,8 +20,12 @@ public class ComplaintGUI
 	CustDetailsGUI cdgui;
 	
 	static NavigationListener navigationListener;	
+	static FetchCustHistListener fetchCustHistListener;
+	static AddComplaintListener addComplaintListener;
+	static ComplaintFocusListener complaintFocusListener;
 	static JFrame frame;
-	
+	static JMenuBar menuBar;
+	static JTextArea complaintTextArea;
 	final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
     final static boolean RIGHT_TO_LEFT = false;
@@ -29,22 +33,27 @@ public class ComplaintGUI
     public ComplaintGUI()
     { 	   	
 		//navigation inner class listener
-    	navigationListener = new NavigationListener();  	
+    	navigationListener = new NavigationListener();  
+    	fetchCustHistListener = new FetchCustHistListener();
+    	addComplaintListener = new AddComplaintListener();
+    	complaintFocusListener = new ComplaintFocusListener();	
     }
     
     
     public static void addComponentsToPane(Container pane)
     {      	  	  	
-    	if (RIGHT_TO_LEFT)
+    	/*if (RIGHT_TO_LEFT)
     	{
             pane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        }
+        }*/
  
         //text area
-		JTextArea complaintTextArea;
+		
+		JTextArea readOnlyTextArea;
 		
 		//scroll pane
 		JScrollPane complaintScrollPane;
+		JScrollPane readOnlyScrollPane;
 		
 		//menus
 		JMenu fileMenu = new JMenu("File");
@@ -75,8 +84,9 @@ public class ComplaintGUI
 	    	    
 	    
 		//menu bar
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		pane.add(menuBar);
+		//pane.setJMenuBar(menuBar);
     	menuBar.add(fileMenu);
     	menuBar.add(pageNav);
     	menuBar.add(fileHelpMenu);
@@ -91,6 +101,7 @@ public class ComplaintGUI
     	pageNav.add(navProblems);
     	pageNav.add(navCustDetails);
     	
+    	fileClose.addActionListener(navigationListener);
     	navHome.addActionListener(navigationListener);
     	navProducts.addActionListener(navigationListener);
     	navJoining.addActionListener(navigationListener);
@@ -101,53 +112,139 @@ public class ComplaintGUI
     	fileHelpMenu.add(helpFAQ);
     	fileHelpMenu.add(helpGuide);
     	fileHelpMenu.add(helpSearch); 
-	
-    
-	 	//buttons
-    	JButton homeComplButton = new JButton("Home");
-	    c.ipady = 20;
+    	
+    	
+    	//add menu
+    	c.ipady = 15;
 	    c.weightx = 0.5;
     	c.gridx = 0;
 		c.gridy = 0;
+		c.gridwidth = 0;
+		c.gridheight = 1;
+    	pane.add(menuBar, c);
+    	//c.insets = new Insets(0,0,0,0);
+    	//menuBar.addActionListener(navigationListener); 
+    	
+	 	//add buttons
+    	JButton homeComplButton = new JButton("Home");
+	    c.ipady = 20;
+	    c.weightx = 0.0;
+    	c.gridx = 0;
+		c.gridy = 1;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
+		//c.insets = new Insets(0,0,0,0);
     	pane.add(homeComplButton, c);   
     	homeComplButton.addActionListener(navigationListener); 	
     	
-    	
-    	JButton newComplButton = new JButton("New Complaint");
+
+		JLabel custIdLbl = new JLabel("Customer ID:");
 		c.ipady = 20;
-		c.weightx = 0.25;
-		c.gridx = 1;
-		c.gridy = 0;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 2;
 		c.gridwidth = 1;
 		c.gridheight = 1;
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(custIdLbl, c);
+		//newComplButton.addActionListener(navigationListener);
+		
+		JTextField custIdTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+		//c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(custIdTxt, c);
+		//newComplButton.addActionListener(navigationListener);
+		
+		
+		JButton fetchCustHistButton = new JButton("Fetch Complaint History");
+		//c.ipady = 20;
+		c.weightx = 0.0;
+		c.gridx = 2;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(fetchCustHistButton, c);
+		fetchCustHistButton.addActionListener(fetchCustHistListener);
+		
+		
+	    
+	    //add text area
+	    readOnlyTextArea = new JTextArea("Previous Complaints History", 10, 40);
+	    readOnlyTextArea.setEditable(false);
+		readOnlyTextArea.setFont(new Font("Serif", Font.ITALIC, 16));
+		readOnlyTextArea.setLineWrap(true);
+		readOnlyTextArea.setWrapStyleWord(true);
+		
+		readOnlyScrollPane = new JScrollPane(readOnlyTextArea);
+		readOnlyScrollPane.setVerticalScrollBarPolicy(
+        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		//complaintScrollPane.setPreferredSize(new Dimension(400, 200));
+		//c.fill = GridBagConstraints.VERTICAL;
 		c.fill = GridBagConstraints.HORIZONTAL;
-    	pane.add(newComplButton, c);
-		newComplButton.addActionListener(navigationListener);
+		c.weightx = 0.0;
+		//c.ipady = 200;
+		//c.ipadx = 200;
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 3;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,10,0);
+		pane.add(readOnlyScrollPane, c);
+		//textArea.getDocument().addDocumentListener(this);
 	    
 	    
-	    complaintTextArea = new JTextArea("Add comments here.");
+	    
+	    
+	    //add text area
+	    complaintTextArea = new JTextArea("Add comments here.", 10, 40);
 		complaintTextArea.setFont(new Font("Serif", Font.ITALIC, 16));
 		complaintTextArea.setLineWrap(true);
 		complaintTextArea.setWrapStyleWord(true);
+		complaintTextArea.addFocusListener(complaintFocusListener);
 		
 		complaintScrollPane = new JScrollPane(complaintTextArea);
 		complaintScrollPane.setVerticalScrollBarPolicy(
         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		//complaintScrollPane.setPreferredSize(new Dimension(100, 100));
-		c.fill = GridBagConstraints.VERTICAL;
+		//complaintScrollPane.setPreferredSize(new Dimension(400, 200));
+		//c.fill = GridBagConstraints.VERTICAL;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.0;
-		c.ipady = 200;
-		c.ipadx = 200;
+		//c.ipady = 200;
+		//c.ipadx = 200;
 		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 0;
-		c.gridheight = 0;
-		//c.anchor = GridBagConstraints.PAGE_END;
+		c.gridy = 4;
+		c.gridwidth = 3;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
 		pane.add(complaintScrollPane, c);
+		//textArea.getDocument().addDocumentListener(this);
+		
+		
+		JButton newComplButton = new JButton("Add Complaint");
+		//c.ipady = 20;
+		//c.weightx = 1;
+		c.gridx = 0;
+		c.gridy = 5;
+		c.gridwidth = 3;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(newComplButton, c);
+		newComplButton.addActionListener(addComplaintListener);
+		
+ 
+	
+
     }
     
     
@@ -156,9 +253,9 @@ public class ComplaintGUI
         frame = new JFrame("Complaints");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         	
-    	frame.setResizable(true);
+    	frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
-		//frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);			
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);			
  
         //Set up the content pane.
         addComponentsToPane(frame.getContentPane());
@@ -185,26 +282,63 @@ public class ComplaintGUI
                     pgui = new ProductsGUI();
 			    	pgui.pack();
 			    	
-                    //dispose();
+                    frame.dispose();
                 }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
 			    	jgui.pack();
 			    	
-                    //dispose();
+                    frame.dispose();
                 }
                 if (e.getActionCommand().equals("Common Problems")) {
                     pbgui = new ProblemsGUI();
 			    	pbgui.pack();
 
-                    //dispose();
+                    frame.dispose();
                 }
                 if (e.getActionCommand().equals("Customer Details")) {
                     cdgui = new CustDetailsGUI();
 			    	cdgui.pack();
 
-                    //dispose();
+                    frame.dispose();
+                }
+                if (e.getActionCommand().equals("Close")) {
+                    System.exit(0);
                 }
     		}
     	}
+    	
+    	
+    class FetchCustHistListener implements ActionListener
+     {
+     	public void actionPerformed(ActionEvent ev)
+     	{
+	     	System.out.println("Fetching customer history...");
+			
+     	}
+     }
+     
+     class AddComplaintListener implements ActionListener
+     {
+     	public void actionPerformed(ActionEvent ev)
+     	{
+	     	System.out.println("Adding complaint...");
+			
+     	}
+     }
+     	
+     class ComplaintFocusListener implements FocusListener
+     {
+     	public void focusGained(FocusEvent e)
+     	{
+			complaintTextArea.setText("");
+     	}
+        public void focusLost(FocusEvent e) 
+        {
+       		 
+    	}
+     	
+     	
+     }
+
 }
