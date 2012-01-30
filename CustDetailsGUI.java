@@ -9,6 +9,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.Blob;
+import java.io.IOException;
 
 public class CustDetailsGUI
 {		
@@ -20,6 +31,9 @@ public class CustDetailsGUI
     final static boolean RIGHT_TO_LEFT = false;
     
     static NavigationListener navigationListener;
+    static DeleteCustomerListener deleteCustomerListener;
+    static UpdateCustomerListener updateCustomerListener;
+    static FetchCustListener fetchCustListener;
     
     static String[] secQuestionString = {"First pets name?", "Mothers maiden name?", "Favourite actor?"};
 	
@@ -32,6 +46,9 @@ public class CustDetailsGUI
 	public CustDetailsGUI()
     { 	   	
     	navigationListener = new NavigationListener();
+    	deleteCustomerListener = new DeleteCustomerListener();
+    	updateCustomerListener = new UpdateCustomerListener();
+    	fetchCustListener = new FetchCustListener();
     }
     
     
@@ -156,7 +173,8 @@ public class CustDetailsGUI
 		c.gridheight = 1;
 		c.insets = new Insets(0,-35,15,0);
     	pane.add(fetchCustDetailsButton, c);
-		//fetchCustHistButton.addActionListener(fetchCustHistListener);
+		fetchCustDetailsButton.addActionListener(fetchCustListener);
+		
 		
 		
 		
@@ -414,7 +432,7 @@ public class CustDetailsGUI
 		c.gridheight = 1;
 		c.insets = new Insets(10,0,0,0);
     	pane.add(updateDetailsButton, c);   
-    	//homeComplButton.addActionListener(navigationListener);
+    	updateDetailsButton.addActionListener(updateCustomerListener);
     	
     	//button
     	JButton deleteAccountButton = new JButton("Delete Account");
@@ -426,7 +444,7 @@ public class CustDetailsGUI
 		c.gridheight = 1;
 		c.insets = new Insets(10,0,0,0);
     	pane.add(deleteAccountButton, c);   
-    	//homeComplButton.addActionListener(navigationListener);
+    	deleteAccountButton.addActionListener(deleteCustomerListener);
 
     }
     
@@ -450,6 +468,40 @@ public class CustDetailsGUI
     
     
     //event listeners
+    class DeleteCustomerListener implements ActionListener
+    {
+    		public void actionPerformed(ActionEvent e)
+    		{
+
+    	      JOptionPane.showConfirmDialog(null,"Are you sure you want to delete customer?","Delete Account",JOptionPane.YES_NO_OPTION);
+    	      //http://docs.oracle.com/javase/1.5.0/docs/api/javax/swing/JOptionPane.html#showConfirmDialog(java.awt.Component, java.lang.Object)
+ 
+    		}
+    	
+    }
+    
+        class UpdateCustomerListener implements ActionListener
+    {
+    		public void actionPerformed(ActionEvent e)
+    		{
+
+    	      JOptionPane.showConfirmDialog(null,"Are you sure you want to update customer details?","Account update",JOptionPane.YES_NO_OPTION);
+    	    
+ 
+    		}
+    	
+    }
+    
+        class FetchCustListener implements ActionListener
+     {
+     	public void actionPerformed(ActionEvent ev)
+     	{
+	     	System.out.println("Fetching customer details...");
+			
+     	}
+     }
+    
+    
     class NavigationListener implements ActionListener
     	{
     		public void actionPerformed(ActionEvent e)
