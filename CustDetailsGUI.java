@@ -34,6 +34,7 @@ public class CustDetailsGUI
     static DeleteCustomerListener deleteCustomerListener;
     static UpdateCustomerListener updateCustomerListener;
     static FetchCustListener fetchCustListener;
+    static JTextField custIdTxt;
     
     static String[] secQuestionString = {"First pets name?", "Mothers maiden name?", "Favourite actor?"};
 	
@@ -153,7 +154,7 @@ public class CustDetailsGUI
     	pane.add(custIdLbl, c);
 		
 		
-		JTextField custIdTxt = new JTextField("");
+		custIdTxt = new JTextField("");
 		//c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -473,9 +474,32 @@ public class CustDetailsGUI
     		public void actionPerformed(ActionEvent e)
     		{
 
-    	      JOptionPane.showConfirmDialog(null,"Are you sure you want to delete customer?","Delete Account",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+    	      int result = JOptionPane.showConfirmDialog(null,"Are you sure you want to delete customer?","Delete Account",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+    	       if (result == JOptionPane.YES_OPTION) {
+    	      String custId = custIdTxt.getText();	
+    	      Connection connection = View.getConnection();
+			  Statement st = null;
+			  ResultSet rs = null;
+					
+					try
+					{
+						st = connection.createStatement();
+						String deletingSql = "DELETE FROM customer WHERE cust_id=" + custId + ";";
+						
+						st.executeUpdate(deletingSql);
+						JOptionPane.showMessageDialog(null,"Customer Deleted!");
+	
+					}
+					catch(SQLException ex)
+					{
+						ex.printStackTrace();
+					}
     	      
- 
+    	       }
+    	       else if (result == JOptionPane.NO_OPTION) {
+          	   System.out.println("Delete cancelled");
+        }
+    	       
     		}
     	
     }
@@ -494,11 +518,41 @@ public class CustDetailsGUI
     
         class FetchCustListener implements ActionListener
      {
-     	public void actionPerformed(ActionEvent ev)
-     	{
-	     	System.out.println("Fetching customer details...");
+		public void actionPerformed(ActionEvent ev)
+			{
+			/*
+				String custId = custIdTxt.getText();
+				Connection connection = View.getConnection();
+				Statement st = null;
+				ResultSet rs = null;
+				
+				String custID = "";
+				try
+				{
+					st = connection.createStatement();
+					rs = st.executeQuery("SELECT fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns FROM customer WHERE cust_id =" + custId + ";");
+	
+					boolean found = rs.next();
+					
+					if (!found)
+					{
+						
+						
+					}
+					else
+					{
+		
+		
+					}
+				}
+				catch(SQLException ex)
+				{
+					readOnlyTextArea.setText("Please Enter Customer ID.");
+					ex.printStackTrace();
+				}
+			*/
 			
-     	}
+			}
      }
     
     
@@ -533,7 +587,7 @@ public class CustDetailsGUI
                 }
                 if (e.getActionCommand().equals("Products")) {
                     pgui = new ProductsGUI();
-			    	pgui.pack();
+			    
 
                     frame.dispose();
                 }
