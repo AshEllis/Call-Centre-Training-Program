@@ -473,8 +473,8 @@ public class CustDetailsGUI
     		public void actionPerformed(ActionEvent e)
     		{
 
-    	      JOptionPane.showConfirmDialog(null,"Are you sure you want to delete customer?","Delete Account",JOptionPane.YES_NO_OPTION);
-    	      //http://docs.oracle.com/javase/1.5.0/docs/api/javax/swing/JOptionPane.html#showConfirmDialog(java.awt.Component, java.lang.Object)
+    	      JOptionPane.showConfirmDialog(null,"Are you sure you want to delete customer?","Delete Account",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+    	      
  
     		}
     	
